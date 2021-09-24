@@ -1,6 +1,7 @@
 package top.bento.blog.service;
 
 import top.bento.blog.dao.pojo.SysUser;
+import top.bento.blog.vo.CommenterVo;
 import top.bento.blog.vo.SysUserVo;
 
 public interface SysUserService {
@@ -12,6 +13,8 @@ public interface SysUserService {
     SysUser findUserByAccount(String account);
 
     SysUserVo findUserByToken(String token);
+
+    CommenterVo findCommenterById(Long id);
 
     void save(SysUser user);
 }

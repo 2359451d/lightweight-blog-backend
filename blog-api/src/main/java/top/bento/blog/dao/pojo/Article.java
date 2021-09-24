@@ -15,9 +15,9 @@ public class Article {
 
     private String summary;
 
-    private int commentCounts;
+    private Integer commentCounts;
 
-    private int viewCounts;
+    private Integer viewCounts;
 
     /**
      * author id
@@ -36,7 +36,7 @@ public class Article {
     /**
      * whether pin at the top
      */
-    private int weight = Article_Common;
+    private Integer weight;
 
 
     /**

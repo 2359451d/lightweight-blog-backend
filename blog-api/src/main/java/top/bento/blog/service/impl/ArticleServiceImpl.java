@@ -46,6 +46,7 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticleVo findArticleById(Long id) {
         Article article = articleMapper.selectById(id);
         ArticleVo copy = copy(article, true, true, true, true);
+        // update the view count => processed by the thread pool
         threadService.updateArticleViewCount(articleMapper, article);
         return copy;
     }

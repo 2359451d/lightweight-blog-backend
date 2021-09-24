@@ -8,6 +8,7 @@ import top.bento.blog.dao.mapper.SysUserMapper;
 import top.bento.blog.dao.pojo.SysUser;
 import top.bento.blog.service.AuthenticationService;
 import top.bento.blog.service.SysUserService;
+import top.bento.blog.vo.CommenterVo;
 import top.bento.blog.vo.SysUserVo;
 
 @Service
@@ -39,6 +40,14 @@ public class SysUserServiceImpl implements SysUserService {
         return sysUserMapper.selectOne(queryWrapper);
     }
 
+    @Override
+    public SysUser findUserByAccount(String account) {
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getAccount, account);
+        queryWrapper.last("limit 1");
+        return sysUserMapper.selectOne(queryWrapper);
+    }
+
     /**
      * validate the given token
      * whether can be fetched in redis
@@ -54,15 +63,23 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
-    public SysUser findUserByAccount(String account) {
-        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SysUser::getAccount, account);
-        queryWrapper.last("limit 1");
-        return sysUserMapper.selectOne(queryWrapper);
+    public CommenterVo findCommenterById(Long id) {
+        SysUser sysUser = sysUserMapper.selectById(id);
+        if (sysUser == null) {
+            sysUser = new SysUser();
+            //commenter default value
+            sysUser.setId(1L);
+            sysUser.setAvatar("/static/img/logo.b3a48c0.png");
+            sysUser.setNickname("default commenter");
+        }
+        CommenterVo commenterVo = new CommenterVo();
+        BeanUtils.copyProperties(sysUser, commenterVo);
+        return commenterVo;
     }
 
     /**
      * Using distributed id
+     *
      * @param user
      */
     @Override
