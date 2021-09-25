@@ -1,6 +1,7 @@
 package top.bento.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -85,8 +86,28 @@ public class ArticleServiceImpl implements ArticleService {
         return copyList(articles, false, false);
     }
 
+    /**
+     * using MB custom sql mapper, avoid single checking branch to set query wrapper
+     * @param pageParams
+     * @return
+     */
     @Override
     public List<ArticleVo> listArticles(PageParams pageParams) {
+        // pagination query, list newest articles by created date
+        // & weight (whether pinned)
+        Page<Article> page = new Page<>(pageParams.getPage(), pageParams.getPageSize());
+        IPage<Article> articleIPage = articleMapper.listArticle(
+                page,
+                pageParams.getCategoryId(),
+                pageParams.getTagId(),
+                pageParams.getYear(),
+                pageParams.getMonth());
+        List<Article> records = articleIPage.getRecords();
+        return copyList(records, true, true);
+    }
+
+    @Deprecated
+    public List<ArticleVo> listArticlesDeprecated(PageParams pageParams) {
         // pagination query, list newest articles by created date
         // & weight (whether pinned)
         Page<Article> page = new Page<>(pageParams.getPage(), pageParams.getPageSize());
@@ -174,7 +195,7 @@ public class ArticleServiceImpl implements ArticleService {
             Long bodyId = article.getBodyId();
             articleVo.setBody(findArticleBodyById(bodyId));
         }
-        if (isCategory){
+        if (isCategory) {
             Long categoryId = article.getCategoryId();
             articleVo.setCategory(categoryService.findCategoryById(categoryId));
         }
@@ -183,6 +204,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * find article body by body id
+     *
      * @param bodyId
      * @return
      */
