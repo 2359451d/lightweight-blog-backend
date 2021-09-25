@@ -2,6 +2,7 @@ package top.bento.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.bento.blog.common.aop.LogAnnotation;
 import top.bento.blog.dao.pojo.Article;
 import top.bento.blog.service.ArticleService;
 import top.bento.blog.vo.ArticleVo;
@@ -25,6 +26,8 @@ public class ArticleController {
      * @param pageParams
      * @return
      */
+    // record log for this controller method
+    @LogAnnotation(module="article", operator="listArticles")
     @PostMapping
     public Result listArticles(@RequestBody PageParams pageParams) {
         //ArticleVo 页面接收的数据
