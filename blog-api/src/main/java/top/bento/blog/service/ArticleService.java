@@ -1,11 +1,12 @@
 package top.bento.blog.service;
 
 import top.bento.blog.dao.dos.Archives;
-import top.bento.blog.dao.pojo.Article;
 import top.bento.blog.vo.ArticleVo;
+import top.bento.blog.vo.params.ArticleParam;
 import top.bento.blog.vo.params.PageParams;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ArticleService {
 
@@ -35,4 +36,6 @@ public interface ArticleService {
     List<Archives> listArchives();
 
     ArticleVo findArticleById(Long id);
+
+    Map<String, String> publish(ArticleParam articleParam);
 }

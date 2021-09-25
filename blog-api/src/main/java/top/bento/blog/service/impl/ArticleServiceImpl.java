@@ -9,17 +9,23 @@ import org.springframework.stereotype.Service;
 import top.bento.blog.dao.dos.Archives;
 import top.bento.blog.dao.mapper.ArticleBodyMapper;
 import top.bento.blog.dao.mapper.ArticleMapper;
+import top.bento.blog.dao.mapper.ArticleTagMapper;
 import top.bento.blog.dao.pojo.Article;
 import top.bento.blog.dao.pojo.ArticleBody;
+import top.bento.blog.dao.pojo.ArticleTag;
 import top.bento.blog.dao.pojo.SysUser;
 import top.bento.blog.service.*;
+import top.bento.blog.utils.UserThreadLocal;
 import top.bento.blog.vo.ArticleBodyVo;
 import top.bento.blog.vo.ArticleVo;
 import top.bento.blog.vo.TagVo;
+import top.bento.blog.vo.params.ArticleParam;
 import top.bento.blog.vo.params.PageParams;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -29,6 +35,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private ArticleBodyMapper articleBodyMapper;
+
+    @Autowired
+    private ArticleTagMapper articleTagMapper;
 
     @Autowired
     private CategoryService categoryService;
@@ -162,5 +171,52 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleBodyVo articleBodyVo = new ArticleBodyVo();
         articleBodyVo.setContent(articleBody.getContent());
         return articleBodyVo;
+    }
+
+    /**
+     * post a new article
+     *
+     * @param articleParam
+     * @return
+     */
+    @Override
+    public Map<String, String> publish(ArticleParam articleParam) {
+        Article article = new Article();
+        // author info
+        SysUser user = UserThreadLocal.get();
+        article.setAuthorId(user.getId());
+        article.setWeight(Article.Article_Common);
+        article.setViewCounts(0);
+        article.setTitle(articleParam.getTitle());
+        article.setSummary(articleParam.getSummary());
+        article.setCommentCounts(0);
+        article.setCreateDate(System.currentTimeMillis());
+        article.setCategoryId(articleParam.getCategory().getId());
+        articleMapper.insert(article); // article id would be generated after insertion
+
+        // tags
+        List<TagVo> tags = articleParam.getTags();
+        if (tags != null) {
+            for (TagVo tag : tags) {
+                ArticleTag articleTag = new ArticleTag();
+                articleTag.setTagId(tag.getId());
+                Long articleId = article.getId();
+                articleTag.setArticleId(articleId);
+                articleTagMapper.insert(articleTag);
+            }
+        }
+
+        // body (content, contentHtml)
+        ArticleBody articleBody = new ArticleBody();
+        articleBody.setArticleId(article.getId());
+        articleBody.setContent(articleParam.getBody().getContent());
+        articleBody.setContentHtml(articleParam.getBody().getContentHtml());
+        articleBodyMapper.insert(articleBody);
+        // set body id
+        article.setBodyId(articleBody.getId());
+        articleMapper.updateById(article);
+        Map<String, String> map = new HashMap<>();
+        map.put("id", article.getId().toString());
+        return map;
     }
 }

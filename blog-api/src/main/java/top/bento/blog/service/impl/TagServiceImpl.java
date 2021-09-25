@@ -1,5 +1,6 @@
 package top.bento.blog.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,16 @@ public class TagServiceImpl implements TagService {
 
     @Autowired
     private TagMapper tagMapper;
+
+    /**
+     * List all the tags available, used when posting new articles
+     * @return
+     */
+    @Override
+    public List<TagVo> listAllTags() {
+        List<Tag> tags = tagMapper.selectList(new LambdaQueryWrapper<>());
+        return copyList(tags);
+    }
 
     /**
      * find the most popular tags by the associated article counts

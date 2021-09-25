@@ -2,12 +2,15 @@ package top.bento.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.bento.blog.dao.pojo.Article;
 import top.bento.blog.service.ArticleService;
 import top.bento.blog.vo.ArticleVo;
+import top.bento.blog.vo.params.ArticleParam;
 import top.bento.blog.vo.params.PageParams;
 import top.bento.blog.vo.Result;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("articles")
@@ -54,7 +57,7 @@ public class ArticleController {
     }
 
     @PostMapping("listArchives")
-    public Result listArchives(){
+    public Result listArchives() {
         return Result.success(articleService.listArchives());
     }
 
@@ -64,4 +67,9 @@ public class ArticleController {
         return Result.success(articleVo);
     }
 
+    @PostMapping("publish")
+    public Result publish(@RequestBody ArticleParam articleParam) {
+        Map<String, String> map = articleService.publish(articleParam);
+        return Result.success(map);
+    }
 }

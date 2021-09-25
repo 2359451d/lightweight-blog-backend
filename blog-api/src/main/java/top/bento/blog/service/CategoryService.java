@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface CategoryService {
     CategoryVo findCategoryById(Long id);
+
+    List<CategoryVo> findAll();
 }
