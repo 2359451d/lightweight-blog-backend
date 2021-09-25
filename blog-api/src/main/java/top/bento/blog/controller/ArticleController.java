@@ -30,7 +30,6 @@ public class ArticleController {
     @LogAnnotation(module="article", operator="listArticles")
     @PostMapping
     public Result listArticles(@RequestBody PageParams pageParams) {
-        //ArticleVo 页面接收的数据
         List<ArticleVo> articles = articleService.listArticles(pageParams);
         return Result.success(articles);
     }

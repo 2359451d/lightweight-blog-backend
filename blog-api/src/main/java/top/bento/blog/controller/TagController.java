@@ -2,6 +2,7 @@ package top.bento.blog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.bento.blog.service.TagService;
@@ -18,7 +19,7 @@ public class TagController {
 
     // GET tags/hot
     @GetMapping("hot")
-    public Result listTopTags(){
+    public Result listTopTags() {
         // list 6 the most popular tags
         int limit = 6;
         List<TagVo> hotTags = tagService.findHotTagIds(limit);
@@ -27,9 +28,18 @@ public class TagController {
 
     // GET tags/
     @GetMapping
-    public Result listAllTags(){
+    public Result listAllTags() {
         List<TagVo> tagVoList = tagService.listAllTags();
         return Result.success(tagVoList);
     }
 
+    @GetMapping("detail")
+    public Result listAllTagDetails() {
+        return Result.success(tagService.listAllTagDetails());
+    }
+
+    @GetMapping("detail/{id}")
+    public Result getTagDetailById(@PathVariable("id") Long id) {
+        return Result.success(tagService.getTagDetailById(id));
+    }
 }

@@ -16,9 +16,9 @@ public class QiniuUtils {
 
     public static  final String url = "https://static.xxx.com/";
 
-    @Value("${qiniu.accessKey}")
+    //@Value("${qiniu.accessKey}")
     private  String accessKey;
-    @Value("${qiniu.accessSecretKey}")
+    //@Value("${qiniu.accessSecretKey}")
     private  String accessSecretKey;
 
     public  boolean upload(MultipartFile file,String fileName){
